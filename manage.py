@@ -15,6 +15,6 @@ class TestCICD(unittest.TestCase):
         print("index funcional")
         self.assertTrue(render_template)
 
-if __name__ == '__main__':
-    unittest.main()
+#if __name__ == '__main__':
+unittest.main()
     
