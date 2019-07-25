@@ -1,5 +1,5 @@
 import unittest
-from app import main
+from app import showSignUp
 
 class TestCICD(unittest.TestCase):
 
@@ -9,7 +9,7 @@ class TestCICD(unittest.TestCase):
     def tearDown(self):
         print("Fin de las pruebas")
 
-    def test_main(self):
+    def test_showSignUp(self):
 
         print("index funcional")
         self.assertTrue(render_template)
