@@ -13,8 +13,7 @@ class TestCICD(unittest.TestCase):
     def test_showSignUp(self):
 
         print("index funcional")
-        self.assertTrue(render_template)
+            self.assertTrue(render_template)
 
-#if __name__ == '__main__':
-unittest.main()
-    
+if __name__ == '__main__':
+    unittest.main()
