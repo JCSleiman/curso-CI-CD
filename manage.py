@@ -1,4 +1,5 @@
 import unittest
+from app import main
 
 class TestCICD(unittest.TestCase):
 
