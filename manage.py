@@ -1,5 +1,6 @@
 import unittest
-from app import showSignUp
+#sys.path.insert(1, '/path/to/application/app/folder')
+from app import *
 
 class TestCICD(unittest.TestCase):
 
