@@ -1,6 +1,7 @@
-FROM python:3.7-alpine
-WORKDIR /var/www/
+FROM python:3-slim
+WORKDIR /usr/src/app
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-RUN pip3 install Flask==1.0
+CMD ["python", "./app.py"]
 EXPOSE 5000
-CMD ["python3", "app.py"]
