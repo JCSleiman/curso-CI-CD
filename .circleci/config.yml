@@ -8,7 +8,7 @@ jobs:
          fingerprints:
             - "a2:08:0e:94:8f:47:d3:99:1b:8d:f5:27:d5:0a:fb:a9"
       - run:
-          name: Deploy to the Prod Server
+          name: Deploy to the Prod Server.
           command: |
                  ssh -o "StrictHostKeyChecking=no" $USER@$PROD_IP '
                      cd $BUILD_LOCATION
