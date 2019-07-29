@@ -1,48 +1,48 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
 version: 2
 jobs:
-  build:
+  deployprod:
     docker:
-      - image: circleci/python:3.6.1
-
-    working_directory: ~/repo
-
+      - image: circleci/python:3
     steps:
-      - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "requirements.txt" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
+      - add_ssh_keys:
+         fingerprints:
+            - "a2:08:0e:94:8f:47:d3:99:1b:8d:f5:27:d5:0a:fb:a9"
       - run:
-          name: install dependencies
+          name: Deploy to the Prod Server
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
-
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
+                 ssh -o "StrictHostKeyChecking=no" $USER@$PROD_IP '
+                     cd $BUILD_LOCATION
+                     git checkout $CIRCLE_BRANCH &&
+                     git reset --hard origin/$CIRCLE_BRANCH &&
+                     git pull origin $CIRCLE_BRANCH
+                     '
+  deploytest:
+    docker:
+      - image: circleci/python:3
+    steps:
+      - add_ssh_keys:
+         fingerprints:
+            - "74:3b:67:37:b0:59:cd:a3:6c:27:e5:98:6f:92:59:3f"
       - run:
-          name: run tests
+          name: Deploy to the Test Server
           command: |
-            . venv/bin/activate
-            python manage.py #test
-
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports
+                 ssh -o "StrictHostKeyChecking=no" $TEST_USER@$TEST_IP '
+                     cd $TEST_BUILD_LOCATION
+                     git checkout $CIRCLE_BRANCH &&
+                     git reset --hard origin/$CIRCLE_BRANCH &&
+                     git pull origin $CIRCLE_BRANCH
+                     '
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - deployprod:
+          filters:
+            branches:
+              only:
+                - master
+      - deploytest:
+          filters:
+            branches:
+              only:
+                - test
