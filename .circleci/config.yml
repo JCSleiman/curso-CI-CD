@@ -46,3 +46,73 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
+          
+          
+#################################################
+version: 2
+jobs:
+  deployprod:
+    docker:
+      - image: circleci/python:3.6.1
+    steps:
+      - add_ssh_keys:
+         fingerprints:
+            - "77:c8:f6:df:4c:bf:c7:7e:bc:87:d4:6e:6e:2f:7b:d6"
+      - run:
+          name: Deploy to PROD.
+          command: |
+                 ssh -o "StrictHostKeyChecking=no" ubuntu@$PROD_IP '
+                     ssh -i erizo.pem emilio@$PROD_IP "
+                      echo "Start Deploy" &&
+                      cd /home/emilio/circleci/curso-CI-CD &&
+                      git clone git@github.com:JCSleiman/curso-CI-CD.git -b BlingbyProd newdeployment &&
+                      echo "Cloned"
+                      
+                      echo "Finish Deploy" 
+                     "
+                     '
+  deploytest:
+    docker:
+      - image: circleci/php:5.6-fpm
+    steps:
+      - add_ssh_keys:
+         fingerprints:
+            - "ee:f2:7c:77:ed:b2:45:ae:80:c9:06:f2:37:51:7d:da"
+      - run:
+          name: Deploy to TEST.
+          command: |
+                 ssh -o "StrictHostKeyChecking=no" www-data@$TEST_IP '
+                     echo "Start Deploy" &&
+                     rm -rf newdeployment &&
+                     git clone git@github.com:Blingby/Blingby-Web.git -b newtest newdeployment &&
+                     echo "Cloned" &&
+                     cd /var/www/newdeployment &&
+                     echo "npm install" &&
+                     /var/www/.nvm/versions/node/v10.15.3/bin/npm install --global gulp-cli && 
+                     echo "npm install" &&
+                     /var/www/.nvm/versions/node/v10.15.3/bin/npm i &&
+                     echo "npm i" &&
+                     /var/www/.nvm/versions/node/v10.15.3/bin/gulp styles &&
+                     echo "gulp styles" &&
+                     /var/www/.nvm/versions/node/v10.15.3/bin/gulp scripts | exit 0 &&
+                     echo "gulp scripts" &&
+                     cd /var/www/ &&
+                     rsync -rza newdeployment/ blingby_v2/ &&
+                     echo "rsync finished" &&
+                     rm -rf newdeployment &&
+                     echo "Finish Deploy" 
+                     '
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - deployprod:
+          filters:
+            branches:
+              only:
+                - BlingbyProd
+      - deploytest:
+          filters:
+            branches:
+              only:
+                - newtest
