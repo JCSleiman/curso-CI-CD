@@ -1,4 +1,6 @@
 import unittest
+#sys.path.insert(1, '/path/to/application/app/folder')
+from app import *
 
 class TestCICD(unittest.TestCase):
 
@@ -8,10 +10,10 @@ class TestCICD(unittest.TestCase):
     def tearDown(self):
         print("Fin de las pruebas")
 
-    def test_main(self):
+    def test_showSignUp(self):
 
         print("index funcional")
-        self.assertEqual(render_template('index.html'))
+        self.assertTrue(render_template)
 
 if __name__ == '__main__':
     unittest.main()
