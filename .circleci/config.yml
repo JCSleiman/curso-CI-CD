@@ -12,6 +12,7 @@ jobs:
           command: |
                  ssh -o "StrictHostKeyChecking=no" $USER@$PROD_IP '
                      cd $BUILD_LOCATION
+                     pwd
                      git checkout $CIRCLE_BRANCH &&
                      git reset --hard origin/$CIRCLE_BRANCH &&
                      git pull origin $CIRCLE_BRANCH
@@ -28,6 +29,7 @@ jobs:
           command: |
                  ssh -o "StrictHostKeyChecking=no" $TEST_USER@$TEST_IP '
                      cd $TEST_BUILD_LOCATION
+                     pwd
                      git checkout $CIRCLE_BRANCH &&
                      git reset --hard origin/$CIRCLE_BRANCH &&
                      git pull origin $CIRCLE_BRANCH
