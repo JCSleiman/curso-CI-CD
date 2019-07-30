@@ -43,17 +43,18 @@ jobs:
                      git pull origin $CIRCLE_BRANCH
                      '
       - run:
+         name: Install dependencies
+         command: |
+           python3 -m venv venv
+           . venv/bin/activate
+           pip install -r requirements.txt
+           
+      - run:
           name: Run tests
           command: |
             . venv/bin/activate
             python manage.py #test
             
-      - run:
-         name: install dependencies
-         command: |
-           python3 -m venv venv
-           . venv/bin/activate
-           pip install -r requirements.txt
             
 workflows:
   version: 2
