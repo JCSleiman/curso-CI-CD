@@ -17,6 +17,7 @@ jobs:
                      git reset --hard origin/$CIRCLE_BRANCH &&
                      git pull origin $CIRCLE_BRANCH
                      '
+          
   deploytest:
     docker:
       - image: circleci/python:3
@@ -24,6 +25,11 @@ jobs:
       - add_ssh_keys:
          fingerprints:
             - "74:3b:67:37:b0:59:cd:a3:6c:27:e5:98:6f:92:59:3f"
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run:
           name: Deploy to the Test Server
           command: |
@@ -34,6 +40,16 @@ jobs:
                      git reset --hard origin/$CIRCLE_BRANCH &&
                      git pull origin $CIRCLE_BRANCH
                      '
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            python manage.py #test
+            
 workflows:
   version: 2
   build-test-and-deploy:
