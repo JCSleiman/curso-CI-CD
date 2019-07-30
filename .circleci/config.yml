@@ -20,6 +20,10 @@ jobs:
                      git checkout $CIRCLE_BRANCH &&
                      git reset --hard origin/$CIRCLE_BRANCH &&
                      git pull origin $CIRCLE_BRANCH
+                     docker stop `docker ps -l -q`
+                     docker rm `docker ps -l -q`
+                     docker build -t erizo .
+                     docker run -p 5000:5000 -d erizo
                      '
           
   deploytest:
@@ -62,6 +66,10 @@ jobs:
                      git checkout $CIRCLE_BRANCH &&
                      git reset --hard origin/$CIRCLE_BRANCH &&
                      git pull origin $CIRCLE_BRANCH
+                     docker stop `docker ps -l -q`
+                     docker rm `docker ps -l -q`
+                     docker build -t erizo .
+                     docker run -p 5000:5000 -d erizo
                      '
 
       - save_cache:
